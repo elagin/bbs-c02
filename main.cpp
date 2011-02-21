@@ -12,80 +12,82 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <windows.h>
 
 using namespace std;
-/*
-string getPref(const string & aStr)
+
+bool checkFile( const string & fileName )
 {
-    string res;
-    for(int i = 0; i < aStr.length(); i++ )
-    {
-        try
-        {
-            lexical_cast<int>(aStr[i]);
-            return res;
-        }
-        catch(bad_lexical_cast &)
-        {
-            res.append(&aStr[i],1);
-        }
-    }
-    return res;
+	HANDLE hFile;
+	hFile = CreateFileA( fileName.c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+	if( hFile == INVALID_HANDLE_VALUE )
+	{
+		return true;
+	}
+	else
+	{
+		CloseHandle(hFile);
+		cout << "File " << fileName << " exist" << endl;
+		return false;
+	}
 }
 
-string getPostf(const string & aStr, const int startPos)
+string setCell(const string & aSrt, const bool isPref)
 {
-    string res;
-    cout << "0123456789" << endl;
-    cout << aStr << endl;
-    for(int i = startPos; i < aStr.length(); i++ )
-    {
-        cout << i << aStr[i] << endl;
-        try
-        {
-            lexical_cast<int>(aStr[i]);
-        }
-        catch(bad_lexical_cast &)
-        {
-            int size = aStr.length()-i;
-//            cout << "I:" << i << " Len: " << size  << endl;
-            res = aStr.substr( i, aStr.length()-i);
-            return res;
-        }
-    }
-    return res;
+	string res;
+	res.append("\"");
+	if(isPref)
+	{
+		res.append("A");
+	}
+	res.append(aSrt);
+	if(isPref)
+	{
+		res.append("A");
+	}
+	res.append("\"");
+	return res;
 }
-*/
-int main(int argc, char** argv) {
 
-    if( argc == 6 )
+int main(int argc, char** argv)
+{
+	if( argc == 6 )
     {
-        int firstStart = lexical_cast<int>(argv[2]);
-        int firstEnd = lexical_cast<int>(argv[3]);
-        int secondStart = lexical_cast<int>(argv[4]);
-        int secondEnd = lexical_cast<int>(argv[5]);
+		if(checkFile(argv[1]))
+		{ 
+			int firstStart = lexical_cast<int>(argv[2]);
+			int firstEnd = lexical_cast<int>(argv[3]);
+			int secondStart = lexical_cast<int>(argv[4]);
+			int secondEnd = lexical_cast<int>(argv[5]);
 
-		ofstream os(argv[1], ios::app);
-//        ofstream os("new.csv",ios::app);
+			ofstream os(argv[1], ios::app);
+			os << "Number #1;Formatted #1;Number #2;Formatted #2" << endl;
 
-        os << "Number #1;Formatted #1;Number #2;Formatted #2" << endl;
+			if( firstEnd > firstStart )
+			{
+				int count = firstEnd - firstStart;
 
-        if( firstEnd > firstStart )
-        {
-            int count = firstEnd - firstStart;
-
-            int j = secondStart;
-            for(int i = firstStart; i <= (firstStart + count); i++ )
-            {
-
-                os << "A" << i << "A" << ";" << i << ";" << "A" << j << "A" << ";" << j << endl;
-                j++;
-            }
-        }
-    }
+				int j = secondStart;
+				for(int i = firstStart; i <= (firstStart + count); i++ )
+				{
+					os << setCell(lexical_cast<string>(i), true)
+						<< ";"
+						<< setCell(lexical_cast<string>(i), false)
+						<< ";"
+						<< setCell(lexical_cast<string>(j), true)
+						<< ";"
+						<< setCell(lexical_cast<string>(j), false)
+						<< endl;
+					j++;
+				}
+			}
+		}
+	}
     else
     {
-        cout << "Error" << endl;
+		cout << "Invalid params, usage:\n";
+		cout << "c:\\out.csv 10793360000 10793360200 10793420100 10793420300\n";
+		return false;
     }
     return 0;
 }
