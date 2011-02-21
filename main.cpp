@@ -14,11 +14,7 @@
 #include <fstream>
 
 using namespace std;
-
 /*
- * 
- */
-
 string getPref(const string & aStr)
 {
     string res;
@@ -59,7 +55,7 @@ string getPostf(const string & aStr, const int startPos)
     }
     return res;
 }
-
+*/
 int main(int argc, char** argv) {
 
     if( argc == 6 )
@@ -69,16 +65,8 @@ int main(int argc, char** argv) {
         int secondStart = lexical_cast<int>(argv[4]);
         int secondEnd = lexical_cast<int>(argv[5]);
 
-        string test = "JUabc456gggAD";
-        string pref = getPref(test);
-
-        string postf = getPostf(test, pref.length());
-        
-        cout << "pref: " << pref << endl;
-        cout << "post: " << postf << endl;
-
-    //    ofstream os(argv[5], ios::app);
-        ofstream os("new.csv",ios::app);
+		ofstream os(argv[1], ios::app);
+//        ofstream os("new.csv",ios::app);
 
         os << "Number #1;Formatted #1;Number #2;Formatted #2" << endl;
 
@@ -90,7 +78,7 @@ int main(int argc, char** argv) {
             for(int i = firstStart; i <= (firstStart + count); i++ )
             {
 
-                os << pref << i << postf << ";" << i << ";" << j << ";" << j << endl;
+                os << "A" << i << "A" << ";" << i << ";" << "A" << j << "A" << ";" << j << endl;
                 j++;
             }
         }
